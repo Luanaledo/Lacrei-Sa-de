@@ -1,0 +1,82 @@
+Profissional ───< ProfissionalPlanoSaude >─── PlanoSaude
+
+Dicionário de Dados (Proposta 1)
+1. Profissional
+Campo
+Tipo
+Restrição
+id
+SERIAL
+PK
+nome
+VARCHAR(100)
+NOT NULL
+email
+VARCHAR(100)
+NOT NULL, UNIQUE
+cpf
+CHAR(11)
+NOT NULL, UNIQUE
+
+2. PlanoSaude
+Campo
+Tipo
+Restrição
+id
+SERIAL
+PK
+nome
+VARCHAR(100)
+NOT NULL, UNIQUE
+
+3. ProfissionalPlanoSaude
+Campo
+Tipo
+Restrição
+profissional_id
+INT
+PK, FK → Profissional(id)
+plano_saude_id
+INT
+PK, FK → PlanoSaude(id)
+
+Proposta 2: Uso de enum para planos de saúde
+Modelo
+Entidades principais:
+Profissional
+
+
+ProfissionalPlanoSaude com enum no campo plano_saude
+DER:
+Profissional ───< ProfissionalPlanoSaude (com ENUM)
+
+
+Dicionário de Dados (Proposta 2)
+1. Profissional (mesmo da proposta 1)
+2. ProfissionalPlanoSaude
+
+
+Campo
+Tipo
+Restrição
+id
+SERIAL
+            PK
+profissional_id
+INT
+            FK → Profissional(id)
+plano_saude
+ENUM
+   NOT NULL
+
+
+ENUM plano_saude:
+
+
+CREATE TYPE plano_saude_enum AS ENUM (
+  'Unimed', 'Amil', 'Bradesco', 'SulAmerica', 'Outros'
+
+O enum deve ser usado quando tem uma lista pequena e estável, com poucos valores que raramente mudam, alto controle interno, quando se quer simplicidade nas queries. Já as tabelas de domínio podem ser usadas quando a lista muda com frequência, precisa armazenar informações extras (exemplo: tipo de plano, status do plano, CNPJ) e quando se quer garantir integridade relacional com FOREIGN KEY.
+ Em relação às vantagens do enum, podemos citar a leitura e escrita mais rápidas, pois não necessita de JOIN, mais legível em queries simples e ocupa menos espaço, com um armazenamento mais compacto. Porém, temos as desvantagens, como difícil manutenção, devido à necessidade de rodar scripts DDL para adicionar ou remover valores, não permite armazenar metadados e reaproveitamento limitado entre sistemas.
+ As tabelas de domínio apresentam como vantagens: alta manutenibilidade (basta inserir ou atualizar registros), permite expansão de atributos (como tipo, descrição, logotipo etc.) e fácil integração com outras tabelas/sistemas. Em contrapartida, os pontos negativos são que exige JOIN para obter o nome do valor e consultas ligeiramente mais lentas, dependendo do índice.
+
