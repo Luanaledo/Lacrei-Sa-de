@@ -1,0 +1,41 @@
+Script SQL (Proposta 1)
+
+CREATE TABLE Profissional (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  cpf CHAR(11) NOT NULL UNIQUE
+);
+
+CREATE TABLE PlanoSaude (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE ProfissionalPlanoSaude (
+  profissional_id INT NOT NULL,
+  plano_saude_id INT NOT NULL,
+  PRIMARY KEY (profissional_id, plano_saude_id),
+  FOREIGN KEY (profissional_id) REFERENCES Profissional(id),
+  FOREIGN KEY (plano_saude_id) REFERENCES PlanoSaude(id)
+);
+
+Script SQL (Proposta 2)
+
+CREATE TYPE plano_saude_enum AS ENUM (
+  'Unimed', 'Amil', 'Bradesco', 'SulAmerica', 'Outros'
+);
+
+CREATE TABLE Profissional (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  cpf CHAR(11) NOT NULL UNIQUE
+);
+
+CREATE TABLE ProfissionalPlanoSaude (
+  id SERIAL PRIMARY KEY,
+  profissional_id INT NOT NULL,
+  plano_saude plano_saude_enum NOT NULL,
+  FOREIGN KEY (profissional_id) REFERENCES Profissional(id)
+);
